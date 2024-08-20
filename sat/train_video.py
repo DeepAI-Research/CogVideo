@@ -222,9 +222,13 @@ if __name__ == "__main__":
         configs.append(base_config)
     args.log_config = configs
 
+    sat_model = SATVideoDiffusionEngine(args)
+    for param in sat_model.parameters():
+        param.data = param.data.contiguous()
+
     training_main(
         args,
-        model_cls=SATVideoDiffusionEngine,
+        model_cls=sat_model,
         forward_step_function=partial(forward_step, data_class=data_class),
         forward_step_eval=partial(
             forward_step_eval, data_class=data_class, only_log_video_latents=args.only_log_video_latents

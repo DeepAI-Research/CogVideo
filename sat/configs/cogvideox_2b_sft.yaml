@@ -1,9 +1,9 @@
 args:
   checkpoint_activations: True ## using gradient checkpointing
   model_parallel_size: 1
-  experiment_name: lora-disney
+  experiment_name: spatial-understanding-finetune
   mode: finetune
-  load: "CogVideoX-2b-sat/transformer"
+  load: "/home/ubuntu/CogVideo/CogVideoX-2b-sat/transformer"
   no_load_rng: True
   train_iters: 1000
   eval_iters: 1
@@ -12,8 +12,8 @@ args:
   save: ckpts
   save_interval: 100
   log_interval: 20
-  train_data: ["disney"]
-  valid_data: ["disney"]
+  train_data: ["./dataset"]
+  valid_data: ["./dataset"]
   split: 1,0,0
   num_workers: 8
   force_train: True
@@ -153,7 +153,7 @@ model:
     target: vae_modules.autoencoder.VideoAutoencoderInferenceWrapper
     params:
       cp_size: 1
-      ckpt_path: "CogVideoX-2b-sat/vae/3d-vae.pt"
+      ckpt_path: "../CogVideoX-2b-sat/vae/3d-vae.pt"
       ignore_keys: [ 'loss' ]
 
       loss_config:
