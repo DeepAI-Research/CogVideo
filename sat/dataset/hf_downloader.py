@@ -23,6 +23,7 @@ def download_dataset(repo_id, token=None, download_dir="./videos", num_files=Non
         
         hf_hub_download(
             repo_id=repo_id,
+            repo_type="dataset",
             filename=file,
             local_dir=download_dir,
             local_dir_use_symlinks=False,
