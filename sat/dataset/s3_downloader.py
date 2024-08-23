@@ -4,6 +4,7 @@ import boto3
 def download_dataset(s3_bucket, num_files):
     s3 = boto3.client('s3')
 
+    os.makedirs("videos", exist_ok=True)
 
     s3_objects = s3.list_objects_v2(Bucket=s3_bucket)
 
@@ -28,7 +29,7 @@ def download_dataset(s3_bucket, num_files):
     for obj in all_objects[:num_files]:
 
         s3_key = obj['Key']
-        local_filename = os.path.basename(s3_key)
+        local_filename = os.path.join("videos", os.path.basename(s3_key))
         s3.download_file(s3_bucket, s3_key, local_filename)
 
 
