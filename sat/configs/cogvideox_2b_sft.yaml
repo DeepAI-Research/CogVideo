@@ -15,7 +15,7 @@ args:
   train_data: ["./dataset"]
   valid_data: ["./dataset"]
   split: 1,0,0
-  num_workers: 1
+  num_workers: 8
   force_train: True
   only_log_video_latents: True
 

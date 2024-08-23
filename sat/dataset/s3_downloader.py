@@ -35,8 +35,9 @@ def download_dataset(s3_bucket, num_files):
 
 
 if __name__ == "__main__":
+    s3_bucket = "deepai-research-bucket"
     parser = argparse.ArgumentParser(description="Download files from an S3 bucket")
     parser.add_argument("--num_files", type=int, default=100, help="Number of files to download")
     args = parser.parse_args()
 
-    download_dataset(args.num_files)
+    download_dataset(s3_bucket, args.num_files)
