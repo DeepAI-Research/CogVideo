@@ -33,7 +33,7 @@ def json_to_txt_files(json_file_path, output_directory):
 
 if __name__ == "__main__":
     # Example usage
-    json_file_path = "test.json"
-    output_directory = "txt_files"
+    json_file_path = "combinations.json"
+    output_directory = "labels"
 
     json_to_txt_files(json_file_path, output_directory)

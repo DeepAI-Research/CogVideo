@@ -1,5 +1,7 @@
 import os
 import boto3
+from tqdm import tqdm
+import argparse
 
 def download_dataset(s3_bucket, num_files):
     s3 = boto3.client('s3')
@@ -26,15 +28,15 @@ def download_dataset(s3_bucket, num_files):
 
         continuation_token = response.get('NextContinuationToken')
 
-    for obj in all_objects[:num_files]:
-
+    for obj in tqdm(all_objects[:num_files], desc="Downloading"):
         s3_key = obj['Key']
         local_filename = os.path.join("videos", os.path.basename(s3_key))
         s3.download_file(s3_bucket, s3_key, local_filename)
 
 
-
-
 if __name__ == "__main__":
-    s3_bucket = "deepai-research-bucket"
-    download_dataset(s3_bucket, 10)
+    parser = argparse.ArgumentParser(description="Download files from an S3 bucket")
+    parser.add_argument("--num_files", type=int, default=100, help="Number of files to download")
+    args = parser.parse_args()
+
+    download_dataset(args.num_files)
