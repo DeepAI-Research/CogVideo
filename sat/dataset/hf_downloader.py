@@ -31,7 +31,6 @@ def download_dataset(repo_id, token=None, num_files=100):
             token=token
         )
         
-        print(f"Downloaded {file}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download dataset from HuggingFace Hub")
