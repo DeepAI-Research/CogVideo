@@ -379,8 +379,8 @@ class SFTDataset(Dataset):
                         start = int(skip_frms_num)
                         end = int(start + num_frames / fps * actual_fps)
                         end_safty = min(int(start + num_frames / fps * actual_fps), int(ori_vlen))
-                        # indices = np.arange(start, end, (end - start) // num_frames).astype(int)
-                        indices = np.arange(start, end-1, 1).astype(int)[:-1]
+                        indices = np.arange(start, end, (end - start) // num_frames).astype(int)
+                        # indices = np.arange(start, end-1, 1).astype(int)[:-1]
                         temp_frms = vr.get_batch(np.arange(start, end_safty))
                         assert temp_frms is not None
                         tensor_frms = torch.from_numpy(temp_frms) if type(temp_frms) is not torch.Tensor else temp_frms
