@@ -24,7 +24,7 @@ data:
     params:
       video_size: [480, 720]
       fps: 8
-      max_num_frames: 50
+      max_num_frames: 49 
       skip_frms_num: 3.
 
 deepspeed:
