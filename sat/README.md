@@ -69,60 +69,11 @@ loading it into Deepspeed in Finetune.
 0 directories, 8 files
 ```
 
-3. Modify the file `configs/cogvideox_2b_infer.yaml`.
-
-```yaml
-load: "{your_CogVideoX-2b-sat_path}/transformer" ## Transformer model path
-
-conditioner_config:
-  target: sgm.modules.GeneralConditioner
-  params:
-    emb_models:
-      - is_trainable: false
-        input_key: txt
-        ucg_rate: 0.1
-        target: sgm.modules.encoders.modules.FrozenT5Embedder
-        params:
-          model_dir: "google/t5-v1_1-xxl" ## T5 model path
-          max_length: 226
-
-first_stage_config:
-  target: sgm.models.autoencoder.VideoAutoencoderInferenceWrapper
-  params:
-    cp_size: 1
-    ckpt_path: "{your_CogVideoX-2b-sat_path}/vae/3d-vae.pt" ## VAE model path
-```
-
-+ If using txt to save multiple prompts, please refer to `configs/test.txt` for modification. One prompt per line. If
-  you don't know how to write prompts, you can first use [this code](../inference/convert_demo.py) to call LLM for
-  refinement.
-+ If using the command line as input, modify
-
-```yaml
-input_type: cli
-```
-
-so that prompts can be entered from the command line.
-
-If you want to change the output video directory, you can modify:
-
-```yaml
-output_dir: outputs/
-```
-
-The default is saved in the `.outputs/` folder.
-
-4. Run the inference code to start inference
-
-```shell
-bash inference.sh
-```
-
 ## Fine-Tuning the Model
 
 ### Preparing the Dataset
 
-The dataset format should be as follows:
+The dataset format should be as follows in dataset folder (located in sat/dataset):
 
 ```
 .
@@ -139,12 +90,7 @@ The dataset format should be as follows:
 Each txt file should have the same name as its corresponding video file and contain the labels for that video. Each
 video should have a one-to-one correspondence with a label. Typically, a video should not have multiple labels.
 
-For style fine-tuning, please prepare at least 50 videos and labels with similar styles to facilitate fitting.
-
 ### Modifying the Configuration File
-
-We support both `Lora` and `full-parameter fine-tuning` methods. Please note that both fine-tuning methods only apply to
-the `transformer` part. The `VAE part` is not modified. `T5` is only used as an Encoder.
 
 the `configs/cogvideox_2b_sft.yaml` (for full fine-tuning) as follows.
 
@@ -170,37 +116,21 @@ the `configs/cogvideox_2b_sft.yaml` (for full fine-tuning) as follows.
   only_log_video_latents: True # Avoid using VAE decoder when eval to save memory
 ```
 
-If you wish to use Lora fine-tuning, you also need to modify:
-
-```yaml
-model:
-  scale_factor: 1.15258426
-  disable_first_stage_autocast: true
-  not_trainable_prefixes: [ 'all' ] ## Uncomment
-  log_keys:
-    - txt'
-
-  lora_config: ## Uncomment
-    target: sat.model.finetune.lora2.LoraMixin
-    params:
-      r: 256
-```
-
 ### Fine-Tuning and Validation
 
-1. Run the inference code to start fine-tuning.
+1. Run the inference code (while in /sat directory) to start fine-tuning.
 
 ```shell
 bash finetune_single_gpu.sh # Single GPU
 bash finetune_multi_gpus.sh # Multi GPUs
 ```
 
-### Converting to Huggingface Diffusers Supported Weights
+### Loading Dataset
 
-The SAT weight format is different from Huggingface's weight format and needs to be converted. Please run:
+1. Run hf_downloader.py to download videos from HuggingFace dataset
 
-```shell
-python ../tools/convert_weight_sat2hf.py
-```
+Need to pass in HF API token and number of files in arguments
+Should create /video folder for you
 
-**Note**: This content has not yet been tested with LORA fine-tuning models.
+2. Run json_to_txt.py to convert captions.json file into txt files with labels
+Should create /labels folder for you
